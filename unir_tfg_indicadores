@@ -1,7 +1,7 @@
 -- UNIR Grado en Ingeniería Informática - TFG 
 -- Plan de Gestión de Informática Sanitaria
 -- Diego Anerillas Aljama 
--- ##Consultas SQL para obtención de indicadores##
+-- ## Consultas SQL para obtención de indicadores ##
 
 
 -- Base de datos de conocimiento:
@@ -9,9 +9,9 @@
 
 -- Número de entradas registradas por categoría.
 
-SELECT name, count as num_entradas --es un campo de la tabla
+SELECT name, count as num_entradas -- es un campo de la tabla
 FROM wordpress.wp_terms t, wordpress.wp_term_taxonomy taxo 
-WHERE t.term_id=taxo.term_id AND taxo.taxonomy="category"
+WHERE t.term_id = taxo.term_id AND taxo.taxonomy = "category"
 ORDER BY 2 DESC;
 
 
@@ -19,8 +19,8 @@ ORDER BY 2 DESC;
 
 SELECT u.user_login, count(*) as num_entradas
 FROM wordpress.wp_posts p, wordpress.wp_users u
-WHERE p.post_author=u.ID and p.post_status="publish" 
-AND p.ping_status="open"
+WHERE p.post_author = u.ID and p.post_status = "publish" 
+AND p.ping_status = "open"
 GROUP BY 1
 ORDER BY 2 DESC;
 
@@ -33,7 +33,7 @@ ORDER BY 2 DESC;
 
 SELECT p.nivel, count(*) as num_incidencias
 FROM incidencia i, prioridad p
-WHERE i.prioridad,= p.id
+WHERE i.prioridad = p.id
 GROUP BY 1
 ORDER BY p.id;
 
