@@ -1,0 +1,83 @@
+-- UNIR Grado en Ingeniería Informática - TFG 
+-- Plan de Gestión de Informática Sanitaria
+-- Diego Anerillas Aljama 
+-- ##Consultas SQL para obtención de indicadores##
+
+
+-- Base de datos de conocimiento:
+---------------------------------
+
+-- Número de entradas registradas por categoría.
+
+SELECT name, count as num_entradas --es un campo de la tabla
+FROM wordpress.wp_terms t, wordpress.wp_term_taxonomy taxo 
+WHERE t.term_id=taxo.term_id AND taxo.taxonomy="category"
+ORDER BY 2 DESC;
+
+
+-- Número de entradas registradas por técnico.
+
+SELECT u.user_login, count(*) as num_entradas
+FROM wordpress.wp_posts p, wordpress.wp_users u
+WHERE p.post_author=u.ID and p.post_status="publish" 
+AND p.ping_status="open"
+GROUP BY 1
+ORDER BY 2 DESC;
+
+
+
+-- Herramienta de incidencias:
+------------------------------
+
+-- Número de incidencias por prioridad.
+
+SELECT p.nivel, count(*) as num_incidencias
+FROM incidencia i, prioridad p
+WHERE i.prioridad,= p.id
+GROUP BY 1
+ORDER BY p.id;
+
+
+-- Número de incidencias por categoría.
+
+SELECT c.descripcion, count(*) as num_incidencias
+FROM incidencia i, categoria c
+WHERE i.categoria = c.id
+GROUP BY 1
+ORDER BY c.descripcion;
+
+
+-- Número de incidencias por servicio asistencial (GFH).
+
+SELECT sa.descripcion, count(*) as num_incidencias
+FROM incidencia i, servicio_asistencial sa
+WHERE i.servicio_asistencial = sa.id
+GROUP BY 1
+ORDER BY sa.descripcion;
+
+
+-- Tiempo de resolución medio por prioridad.
+
+SELECT p.nivel, avg(TIMESTAMPDIFF(hour, i.fecha_creacion, i.fecha_cierre) as tiempo_medio_horas
+FROM incidencia i, prioridad p
+WHERE i.prioridad = p.id
+AND i.fecha_cierre IS NOT NULL
+GROUP BY 1
+ORDER BY p.id;
+
+
+-- Tiempo sin servicio en sistemas de información.
+
+SELECT sum(TIMESTAMPDIFF(hour, i.fecha_creacion, i.fecha_cierre) as horas_sin_servicio
+FROM incidencia i 
+WHERE i.prioridad IN (1) – La 1 corresponde a pérdida de servicio
+AND i.fecha_cierre IS NOT NULL;
+
+
+-- Resumen de estado de incidencias.
+
+SELECT e.estado, count(*) as num_incidencias
+FROM incidencia i , estado e
+WHERE i.estado = e.id
+GROUP BY 1
+ORDER BY 1;
